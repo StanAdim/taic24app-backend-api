@@ -2,46 +2,45 @@
 
 namespace App\Http\Controllers\Taic;
 
-use App\Events\ConferenceActivated;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Taic\ConferenceResource;
-use App\Models\Taic\Conference;
+use App\Http\Resources\Taic\DayResource;
+use App\Models\Taic\Activity;
+use App\Models\Taic\Day;
+use App\Models\Taic\Timetable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ConferenceController extends Controller
+class DayController extends Controller
 {
-
-    public function index()
+    public function schedules()
     {
         //
-        $conferences = ConferenceResource::collection(Conference::all()->sortBy('conferenceYear'));
-        if($conferences){
+        $schedules = DayResource::collection(Day::all());
+        $timetables = Timetable::all();
+        $activities = Activity::all();
+        if($schedules){
             return response()->json([
-                'message'=> "TAIC Conferences",
-                'data' => $conferences,
+                'message'=> "TAIC Schedules",
+                'data' => [
+                    'days' => $schedules,
+                    'timetable' => $timetables,
+                    'activities' => $activities
+                ],
                 'code' => 200,
             ]);
         }
         return response()->json([
-            'message'=> "No Conferences Found",
+            'message'=> "No schedules Found",
             'code' => 300,
         ]);
-        
     }
-
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "conferenceYear" => 'required|unique:conferences',
-            "startDate" => 'required',
-            "endDate" => 'required',
-            "venue" => 'required|max:225|min:3',
-            "theme" => 'required|min:3',
-            "aboutConference" => 'required|min:3',
-            "defaultFee" => 'required',
-            "foreignerFee" => 'required',
-            "guestFee" => 'required',
+            "conference_id" => 'required',
+            "date" => 'required',
+            "label" => 'required',
+            "status" => 'required',
         ]);
         if($validator->fails()){
             return response()->json([
@@ -49,27 +48,27 @@ class ConferenceController extends Controller
                 'errors'=> $validator->errors()
             ],422);
         }
-        $newConferenceData = $validator->validate();
-        $newConference = Conference::create($newConferenceData);
+        $newConferenceDay = $validator->validate();
+        $newData = Day::create($newConferenceDay);
         return response()->json([
-            'message'=> "New Conference Created",
-            'data' => $newConference,
+            'message'=> "New Day Created",
+            'data' => $newData,
             'code'=> 200
         ],200);
     }
 
-    public function getConferenceData(string $uuid)
+    public function getConferenceDay(string $uuid)
     {
-        $tgtConference = Conference::where('id',$uuid)->get()->first();
-        if($tgtConference){
+        $tgtConferenceDay = Day::where('id',$uuid)->get()->first();
+        if($tgtConferenceDay){
             return response()->json([
-                'message'=> 'Conference Details: Found',
-                'data' => $tgtConference,
+                'message'=> 'Conference Day: Found',
+                'data' => $tgtConferenceDay,
                 'code' => 200
             ]);
         }
         return response()->json([
-            'message'=> 'Conference Not Found',
+            'message'=> 'Conference Day Not Found',
             'code' => 300
         ]);
     }
@@ -94,11 +93,11 @@ class ConferenceController extends Controller
             ],422);
         }
         $data = $validator->validate();
-        $targetUpdated = Conference::where('id', $data['id'])->update($data);
+        $targetUpdated = Day::where('id', $data['id'])->update($data);
         if($targetUpdated){
             // $dataUpdated = Conference::where('id', $data['id'])->get()->first();
             return response()->json([
-                'message'=> 'Application Data Updated',
+                'message'=> 'Day details Updated',
                 'code' => 200
              ]);
         }
@@ -107,22 +106,22 @@ class ConferenceController extends Controller
             'code' => 300
         ]);
     }
-    public function conferenceActiveate($uuid)
+    public function conferenceDayActivate($uuid)
     {
-        $tgtConference = Conference::where('id',$uuid)->get()->first();
-        if($tgtConference){
+        $tgtConferenceDay = Day::where('id',$uuid)->get()->first();
+        if($tgtConferenceDay){
             // Dispatching an Event
-            $tgtConference->lock = true;
-            $tgtConference->save();
-            event(new ConferenceActivated($tgtConference));
+            $tgtConferenceDay->lock = true;
+            $tgtConferenceDay->save();
+            // event(new ConferenceActivated($tgtConferenceDay));
             return response()->json([
-                'message'=> $tgtConference->conferenceYear.' Conference is Active',
-                'data' => $tgtConference,
+                'message'=> $tgtConferenceDay->conferenceYear.' Conference is Active',
+                'data' => $tgtConferenceDay,
                 'code' => 200
             ]);
         }
         return response()->json([
-            'message'=> 'Conference Not Found',
+            'message'=> 'Conference Day Not Found',
             'code' => 300
         ]);
     }

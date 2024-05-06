@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('timetables', function (Blueprint $table) {
+        Schema::create('activities', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('startTime');
-            $table->string('endTime');
-            $table->string('status');
+            $table->string('name');
+            $table->string('minActivity')->nullable();
+            $table->json('panelist')->nullable(); //array
+            $table->string('moderator')->nullable();
+            $table->boolean('hasMinActivity')->default(false);
+            $table->boolean('hasPanelist')->default(false);
             $table->boolean('is_visible')->default(false);
-            $table->uuid('day_id')
+            $table->uuid('timetable_id')
                     ->nullable()
-                    ->constrained('timetables')
+                    ->constrained('activities')
                     ->cascadeOnDelete();
             $table->timestamps();
         });
@@ -30,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('timetables');
+        Schema::dropIfExists('activities');
     }
 };

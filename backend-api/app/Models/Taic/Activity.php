@@ -6,26 +6,25 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Conference extends Model
+class Activity extends Model
 {
-    use HasFactory;
-    use HasUuids;
+    use HasFactory; use HasUuids;
     protected $keyType = 'string'; // specify the primary key type as string
+    protected $casts = ['panelist' => 'array',];
     public $incrementing = false; // ensure that primary key is not auto-incrementing
     protected $fillable = [
-        "conferenceYear",
-        "startDate",
-        "endDate",
-        "venue",
-        "theme",
-        "aboutConference",
-        "defaultFee",
-        "foreignerFee",
-        "guestFee",
-        "lock"
+        "name",
+        "hasMinActivity",
+        "minActivity",
+        "hasPanelist",
+        "panelist", // array
+        "moderator",
+        "timetable_id",
+        'is_visible'
     ];
-    public function speakers()
+    public function timetable()
     {
-        return $this->hasMany(Speaker::class);
+        return $this->belongsTo(Timetable::class,'timetable_id');
     }
+
 }

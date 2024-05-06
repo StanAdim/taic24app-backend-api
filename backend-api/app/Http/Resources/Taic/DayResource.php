@@ -5,7 +5,7 @@ namespace App\Http\Resources\Taic;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SpeakerResource extends JsonResource
+class DayResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,21 +14,16 @@ class SpeakerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        return  [
             'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'designation' => $this->designation,
-            'institution' => $this->institution,
-            'linkedinLink' => $this->linkedinLink,
-            'twitterLink' => $this->twitterLink,
-            'isMain' => $this->isMain,
-            'imgPath' => $this->imgPath,
-            'is_visible' => $this->is_visible,
             'conferenceYear' => $this->conference->conferenceYear,
+            'label' => $this->label,
+            'date' => $this->date,
+            'status' => $this->status,
+            'is_visible' => $this->is_visible,
             'createdTime' => date('h:i A', strtotime($this->created_at)),
             'createdDate' => date('F j, Y', strtotime($this->created_at)),
-        ];
-        
+            'timetable'=>  TimetableResource::collection($this->timetables)
+            ];   
     }
 }

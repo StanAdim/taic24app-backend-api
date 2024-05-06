@@ -12,7 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('speakers', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('email');
+            $table->string('designation');
+            $table->string('institution');
+            $table->string('linkedinLink')->nullable();
+            $table->string('twitterLink')->nullable();
+            $table->string('imgPath')->default('/speakers/placeholder.png');
+            $table->boolean('isMain')->default(false);
+            $table->uuid('conference_id')->nullable()
+                    ->constrained('speakers')->cascadeOnDelete();
+            $table->boolean('is_visible')->default(false);
             $table->timestamps();
         });
     }

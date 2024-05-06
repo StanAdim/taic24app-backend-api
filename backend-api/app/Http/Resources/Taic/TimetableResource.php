@@ -14,6 +14,13 @@ class TimetableResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id'=> $this->id,
+            'startTime'=> $this->startTime,
+            'endTime'=> $this->endTime,
+            'status'=> $this->status,
+            'is_visible'=> $this->is_visible,
+            'activities'=> $this->activities,
+        ];
     }
 }

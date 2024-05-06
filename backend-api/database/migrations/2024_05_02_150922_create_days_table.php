@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('timetables', function (Blueprint $table) {
+        Schema::create('days', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('startTime');
-            $table->string('endTime');
-            $table->string('status');
+            $table->date('date');
+            $table->string('label');
             $table->boolean('is_visible')->default(false);
-            $table->uuid('day_id')
+            $table->string('status')->default('open');
+            $table->uuid('conference_id')
                     ->nullable()
-                    ->constrained('timetables')
+                    ->constrained('days')
                     ->cascadeOnDelete();
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('timetables');
+        Schema::dropIfExists('days');
     }
 };

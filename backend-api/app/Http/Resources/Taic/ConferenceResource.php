@@ -14,6 +14,22 @@ class ConferenceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return  [
+            'id' => $this->id,
+            'conferenceYear' => $this->conferenceYear,
+            'startDate' => $this->startDate,
+            'endDate' => $this->endDate,
+            'venue' => $this->venue,
+            'theme' => $this->theme,
+            'aboutConference' => $this->aboutConference,
+            'defaultFee' => $this->defaultFee,
+            'foreignerFee' => $this->foreignerFee,
+            'businessSector' => $this->businessSector,
+            'guestFee' => $this->guestFee,
+            'lock' => $this->lock,
+            'createdTime' => date('h:i A', strtotime($this->created_at)),
+            'createdDate' => date('F j, Y', strtotime($this->created_at)),
+            'speakers' => $this->speakers,
+            ];   
     }
 }
